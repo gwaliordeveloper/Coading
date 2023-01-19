@@ -1,0 +1,25 @@
+First add a package vlucas/phpdotenv via composer
+Run composer require vlucas/phpdotenv command in your project root directory. (If you don't have composer.json, don't worry, composer will take care of it.
+
+Copy a file Env.php to your application/libraries directory.
+This will load your env file in environment.
+
+Copy general_helper.php to your application/helpers directory.
+This will add env helper method to get any variable stored in .env file.
+
+Autoload library
+Add library to $autoload['libraries'] like this
+
+$autoload['libraries'] = array('env');
+Autoload helper
+Add helper to $autoload['helper'] like this
+
+$autoload['helper'] = array('general');
+Create an .env file Create an .env file in your project root folder.
+
+Access an env variable
+
+In your php code you can access any .env variable like below
+
+env('MY_VARIABLE');
+Source: https://github.com/technoknol/env-in-CodeIgniter
