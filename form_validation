@@ -1,0 +1,496 @@
+################-------------------For making javascript form validation------------------######################
+
+
+<?php if(get_frontend_settings('recaptcha_status')): ?>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<?php endif; ?>
+
+<?php $signup_banner = 'uploads/system/signup-background.png' ?>
+
+<div style="background-image: url('<?php echo $signup_banner; ?>'); background-repeat: no-repeat; background-position: bottom; height: 615px;">
+<section>
+    <div class="container registration-container">
+
+      <div class="row sign-up">
+        <!-- <div class="col-lg-6 d-none d-lg-block text-center">
+        <img class="mt-5" width="80%" src="<?php echo base_url('uploads/system/sign_up.png'); ?>">
+        </div> -->
+        <div class="col-lg-6 form-signup">
+          <div class="sign-up-form">
+            <?php if(get_settings('fb_social_login')) include "facebook_login.php"; ?>
+            
+            <?php $this->load->view('frontend/registration/step-0'); ?>
+            <?php $this->load->view('frontend/registration/step-1'); ?>
+            <?php //$this->load->view('frontend/registration/step-2'); ?>
+            <?php $this->load->view('frontend/registration/step-3'); ?>
+
+            <div class="registration-controls">
+              <button id="back" class="btn red radius-8" style="width: auto;  margin-left: 0;"><?php echo site_phrase('back'); ?></button>
+              <div class="btn-container">
+                <button id="skip" class="btn btn-outline-secondary radius-8" style="margin-right: 16px; width: 66px;"><?php echo site_phrase('skip'); ?></button>
+                <button id="next" class="btn red radius-8" style="width: auto;"><?php echo site_phrase('next'); ?></button>
+                <button id="done" class="btn red radius-8" style="width: auto;"><?php echo site_phrase('done'); ?></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+<div>
+<script>
+
+let step = 0;
+
+const skipElement = document.getElementById("skip")
+const form1 = document.getElementById("sign_up_form_0")
+const form2 = document.getElementById("sign_up_form_1")
+const form3 = document.getElementById("sign_up_form_2")
+const form4 = document.getElementById("sign_up_form_3")
+const registrationControls = document.querySelector('.registration-controls');
+const doneBtn = document.getElementById("done")
+const nextBtn = document.getElementById("next")
+const backBtn = document.getElementById("back")
+
+skipElement.style.display = "none";
+doneBtn.style.display = "none"
+
+function handleDisplay() {
+  if (step === 0) {
+    skipElement.style.display = "none";
+    nextBtn.style.display = "block";
+    doneBtn.style.display = "none";
+    form1.style.display = "block";
+    form2.style.display = "none";
+    //form3.style.display = "none";
+    form4.style.display = "none";
+    backBtn.style.display = "none";
+
+  } else if (step === 1) {
+    skipElement.style.display = "block";
+    nextBtn.style.display = "block";
+    doneBtn.style.display = "none";
+    form1.style.display = "none";
+    form2.style.display = "block";
+    // form3.style.display = "none";
+    form4.style.display = "none";
+    backBtn.style.display = "block";
+
+  } else if (step === 2) {
+    // Temporarily disbale 3rd form, skip to the 4th form content instead.
+
+    // skipElement.style.display = "block";
+    // nextBtn.style.display = "block";
+    // doneBtn.style.display = "none";
+    // form1.style.display = "none";
+    // form2.style.display = "none";
+    // form3.style.display = "block";
+    // form4.style.display = "none";
+    // backBtn.style.display = "block";
+
+    skipElement.style.display = "none";
+    doneBtn.style.display = "block";
+    nextBtn.style.display = "none";
+    form1.style.display = "none";
+    form2.style.display = "none";
+    // form3.style.display = "none";
+    form4.style.display = "block";
+    backBtn.style.display = "block";
+
+  } else if (step === 3) {
+    // skipElement.style.display = "none";
+    // doneBtn.style.display = "block";
+    // nextBtn.style.display = "none";
+    // form1.style.display = "none";
+    // form2.style.display = "none";
+    // form3.style.display = "none";
+    // form4.style.display = "block";
+    // backBtn.style.display = "block";
+  }
+
+  registrationControls.style.display = "flex";
+}
+
+function showErrorPhone(input, message) {
+    const formGroup = input.closest('.form-group');
+    const errorElement = formGroup.querySelector('.invalid-feedback');
+    errorElement.textContent = message;
+    
+    if (input.id === 'registration-phone') {
+        formGroup.querySelector('.phone-input-wrapper').classList.add('is-invalid');
+    } else {
+        input.classList.add('is-invalid');
+    }
+    errorElement.style.display = 'block';
+}
+
+function removeErrorPhone(input) {
+    const formGroup = input.closest('.form-group');
+    const errorElement = formGroup.querySelector('.invalid-feedback');
+    errorElement.textContent = '';
+    
+    if (input.id === 'registration-phone') {
+        formGroup.querySelector('.phone-input-wrapper').classList.remove('is-invalid');
+    } else {
+        input.classList.remove('is-invalid');
+    }
+    errorElement.style.display = 'none';
+}
+
+function validateForm() {
+  
+    let isValid = true;
+    
+    // First Name validation
+    const firstName = document.getElementById('first_name');
+    alert(firstName);
+    if (firstName.value.trim() === '') {
+        showError(firstName, 'First name is required');
+        isValid = false;
+    } else {
+        removeError(firstName);
+    }
+    
+    // Last Name validation
+    const lastName = document.getElementById('last_name');
+    if (lastName.value.trim() === '') {
+        showError(lastName, 'Last name is required');
+        isValid = false;
+    } else {
+        removeError(lastName);
+    }
+    
+    // Email validation
+    const email = document.getElementById('registration-email');
+    if (email.value.trim() === '') {
+        showError(email, 'Email is required');
+        isValid = false;
+    } else if (!isValidEmail(email.value)) {
+        showError(email, 'Please enter a valid email address');
+        isValid = false;
+    } else {
+        removeError(email);
+    }
+
+    const counrtycode = document.getElementById('country-code');
+    if (counrtycode.value.trim() === '') {
+        showError(counrtycode, 'counrtycode  is required');
+        isValid = false;
+    } else {
+        removeError(counrtycode);
+    }
+    
+    // Phone validation
+    const phone = document.getElementById('registration-phone');
+    if (phone.value.trim() === '') {
+      showErrorPhone(phone, 'Phone number is required');
+        isValid = false;
+    } else if (!isValidPhone(phone.value)) {
+      showErrorPhone(phone, 'Please enter a valid phone number');
+        isValid = false;
+    } else {
+      removeErrorPhone(phone);
+    }
+    
+    // Password validation
+    const password = document.getElementById('registration-password');
+    if (password.value.trim() === '') {
+        showError(password, 'Password is required');
+        isValid = false;
+    } else if (password.value.length < 8) {
+        showError(password, 'Password must be at least 8 characters long');
+        isValid = false;
+    } else {
+        removeError(password);
+    }
+    
+    // Confirm Password validation
+    const confirmPassword = document.getElementById('confirmPassword-registration-password');
+    if (confirmPassword.value.trim() === '') {
+        showError(confirmPassword, 'Please confirm your password');
+        isValid = false;
+    } else if (confirmPassword.value !== password.value) {
+        showError(confirmPassword, 'Passwords do not match');
+        isValid = false;
+    } else {
+        removeError(confirmPassword);
+    }
+    
+    // Date of Birth validation
+    const dateOfBirth = document.getElementById('dateofbirth');
+    if (dateOfBirth.value.trim() === '') {
+        showError(dateOfBirth, 'Date of birth is required');
+        isValid = false;
+    } else {
+        removeError(dateOfBirth);
+    }
+    
+    // Gender validation
+    const gender = document.getElementById('gender');
+    if (gender.value === '') {
+        showError(gender, 'Please select a gender');
+        isValid = false;
+    } else {
+        removeError(gender);
+    }
+    
+    // Residence Country validation
+    const residenceCountry = document.getElementById('residence-country');
+    if (residenceCountry.value === '') {
+        showError(residenceCountry, 'Please select your residence country');
+        isValid = false;
+    } else {
+        removeError(residenceCountry);
+    }
+    
+    // City validation
+    const city = document.getElementById('city');
+    if (city.value.trim() === '') {
+        showError(city, 'City is required');
+        isValid = false;
+    } else {
+        removeError(city);
+    }
+    
+    return isValid;
+}
+
+function showError(input, message) {
+    const formGroup = input.closest('.form-group');
+    const errorElement = formGroup.querySelector('.error-message') || document.createElement('div');
+    errorElement.className = 'error-message text-danger';
+    errorElement.textContent = message;
+    if (!formGroup.querySelector('.error-message')) {
+        formGroup.appendChild(errorElement);
+    }
+    input.classList.add('is-invalid');
+}
+
+function removeError(input) {
+    const formGroup = input.closest('.form-group');
+    const errorElement = formGroup.querySelector('.error-message');
+    if (errorElement) {
+        formGroup.removeChild(errorElement);
+    }
+    input.classList.remove('is-invalid');
+}
+
+function isValidEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+}
+
+function isValidPhone(phone) {
+    // This is a basic check. You might want to use a more sophisticated validation
+    // or integrate it with the intl-tel-input validation
+    const re = /^\+?[\d\s-]{10,}$/;
+    return re.test(phone);
+}
+
+// function validateForm(formElement) {
+//     const inputs = formElement.querySelectorAll('input');
+//     for (let input of inputs) {
+//       // console.log(input);
+      
+//         if (input.value.trim() === "") {
+//             alert(`${input.name} can't be blank!`);
+//             return false;
+//         }
+//     }
+//     return true;
+// }
+
+function onNext() {
+
+  if (step === 0) {
+
+    const validateEmail = (email) => {
+      return email.match(
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+    };
+    // Perform password match check in the first form (form1)
+    const password = form1.querySelector('input[name="password"]').value;
+    const first_name = form1.querySelector('input[name="first_name"]').value;
+    const confirmPassword = form1.querySelector('input[name="confirmPassword"]').value;
+    const email = form1.querySelector('input[name="email"]').value;
+    const countryCode = form1.querySelector('#country-code').value;
+    validateForm();
+    // if (validateForm) {
+    //   alert(validateForm);
+    //         return; // Prevent moving to the next step
+    //     }
+
+    if (!validateEmail(email)) {
+      alert('Invalid email address!');
+      return; // Prevent moving to the next step
+    }
+
+      if (password !== confirmPassword ) {
+          alert('Passwords do not match!');
+          return; // Prevent moving to the next step
+      }
+    } else if (step === 1) {
+        // if (!validateForm(form2)) {
+        //     return; // Prevent moving to the next step
+        // }
+    } else if (step === 2) {
+        // if (!validateForm(form3)) {
+        //     return; // Prevent moving to the next step
+        // }
+    }
+
+  step +=1;
+  handleDisplay();
+}
+
+function collectFormValues() {
+  const formData = {};
+
+  // Function to get form data from a form element
+  function getFormData(formElement) {
+    const data = new FormData(formElement);
+    data.forEach((value, key) => {
+      formData[key] = value;
+    });
+  }
+
+  if (form1) getFormData(form1);
+  if(form1){
+    const countryCode = form1.querySelector('#country-code').value;
+    const residenceCountry = form1.querySelector('#residence-country-name').value;
+    formData.countrycode=countryCode;
+    formData.countryname=residenceCountry;
+  
+  }
+
+  
+  if (form2) getFormData(form2);
+  // if (form3) getFormData(form3);
+  if (form4) getFormData(form4);
+
+  if (form2) {
+        const avatarInput = form2.querySelector('input[name="selected_avatar"]');
+        const uploadPhotoInput = form2.querySelector('input[type="file"]');
+
+        const uploadPhotoInput2 = form2.querySelector('#profile-picture').src;
+
+        // if (avatarInput && !uploadPhotoInput.files.length) {
+          //formData.user_image =uploadPhotoInput.files[0];
+          formData.user_image =uploadPhotoInput2;
+
+        // if (avatarInput && !uploadPhotoInput.files.length) {
+         // formData.user_image =avatarInput.value
+        // }
+
+        // if (uploadPhotoInput && uploadPhotoInput.files.length) {
+        //   formData.avatar_image =  uploadPhotoInput.files[0]; // Append the uploaded file
+        // }
+    }
+
+  // if (form3) {
+  //   const softwareDropdowns = form3.querySelectorAll('.software-dropdown');
+  //   const softwareRatings = form3.querySelectorAll('.software-rating');
+  //   const tagsInput = form3.querySelector('input[name="tags"]');
+  //   const skilltagsInput = form3.querySelector('input[name="skilltags"]');
+  //   formData.software_section = [];
+  //   if (tagsInput) {
+  //     formData.interesttags = $(tagsInput).tagsinput('items'); // Retrieves all the tags as an array
+  //     formData.skilltags = $(skilltagsInput).tagsinput('items'); // Retrieves all the tags as an array
+  //   }
+  //   for (let i = 0; i < softwareDropdowns.length; i++) {
+  //     console.log('Rating element:', softwareRatings[i]);
+  //       const allCircles = softwareRatings[i].querySelectorAll('.circle');
+  //       console.log('All circles:', allCircles);
+  //       const selectedCircles = softwareRatings[i].querySelectorAll('.circle.selected');
+  //       console.log('Selected circles:', selectedCircles);
+  //       console.log('Selected circles:', selectedCircles.length);
+        
+  //       const selectedCircle = softwareRatings[i].querySelector('.circle.selected:last-of-type');
+  //       const ratingValue = selectedCircle ? selectedCircle.getAttribute('data-value') : 0;
+  //       console.log('Rating value:', ratingValue);
+        
+  //       if (softwareDropdowns[i] && softwareDropdowns[i].value) {
+  //           formData.software_section.push({
+  //               softwareId: softwareDropdowns[i].value,
+  //               softwareRating: selectedCircles.length,
+  //           });
+  //       }
+  //   }
+
+
+  // }
+
+ 
+
+  // Collect social network data
+  if (form4) {
+    const socialDropdowns = form4.querySelectorAll('.social-dropdown');
+    const socialUrls = form4.querySelectorAll('input[name="url[]"]');
+    
+    formData.socialNetworks = [];
+    for (let i = 0; i < socialDropdowns.length; i++) {
+      if (socialUrls[i] && socialUrls[i].value) {
+        formData.socialNetworks.push({
+          network: socialDropdowns[i].value,
+          url: socialUrls[i].value
+        });
+      }
+    }
+  }
+
+  return formData;
+}
+
+function onBack(){
+  step -= 1
+
+  handleDisplay()
+}
+
+function onSkip(){
+  step += 1;
+
+  handleDisplay()
+}
+
+document.getElementById('skip').addEventListener('click', onSkip);
+
+document.getElementById('next').addEventListener('click', onNext);
+
+document.getElementById('back').addEventListener('click', onBack);
+
+document.getElementById('done').addEventListener('click', (e) => {
+    const formValues = collectFormValues();
+     console.log('Form values:', formValues);
+ 
+    e.preventDefault(); // Prevent default form submission
+
+    // console.log('Form values:', formValues);
+
+    // AJAX request to CodeIgniter backend
+    fetch('<?php echo site_url('login/register'); ?>', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(formValues)
+    })
+    .then(response => {
+      console.log("response-12345");
+      if(response.status==200){
+        alert('Registration complete');
+        // window.location.href = '<?php echo site_url('login')?>';
+      }
+    })
+    .catch(error => {
+        console.log('Error:'+ error);
+        alert('An error occurred during registration.');
+    });
+
+});
+
+handleDisplay();
+
+</script>
