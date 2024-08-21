@@ -24,8 +24,8 @@ then its move to
 [
     {
       "id": "ubiattendance_app_api",
-      "execute-command": "/home/sourabh/webhook/redeploy.sh",
-      "command-working-directory": "/var/www/html/appAdonisApi",
+      "execute-command": "/path/your/webhook/redeploy.sh",
+      "command-working-directory": "/var/www/html/application",
       "response-message": "Deployed...",
       "trigger-rule": {
         "and": [
@@ -42,7 +42,7 @@ then its move to
           {
             "match": {
               "type": "value",
-              "value": "refs/heads/Development_Aug_2024",
+              "value": "refs/heads/main",
               "parameter": {
                 "source": "payload",
                 "name": "ref"
