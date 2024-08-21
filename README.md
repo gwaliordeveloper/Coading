@@ -74,7 +74,7 @@ echo "$(date): Webhook triggered" >> /var/www/html/logfile_adonisAPI.log
 # make a excuteble file redeploye.sh
 chmod +x redeployweb.sh
 
-# fineally run this commnd with port
+# finally run this commnd with port
    webhook -hooks hooksappapi.json -hotreload -verbose -http-methods post -port 4000
 
 ## Configure Webhook as a System Service (Optional)
