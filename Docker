@@ -1,0 +1,20 @@
+1️⃣ Stop & Remove All Containers
+
+docker stop $(docker ps -aq)  
+docker rm $(docker ps -aq)
+2️⃣ Remove All Docker Images
+
+docker rmi $(docker images -q) -f
+3️⃣ Remove All Docker Networks
+
+docker network prune -f
+4️⃣ Remove All Docker Volumes
+
+docker volume prune -f
+5️⃣ Verify Everything is Clean
+
+docker ps -a   # No containers should be listed
+docker images  # No images should be listed
+docker network ls  # Only default networks should remain
+docker volume ls  # No volumes should be listed
+🚀 Now your Docker environment is completely clean! Let me know if you need further assistance.
